@@ -22,6 +22,6 @@ window.addEventListener("scroll", () => {
  * Add ripple effect
  */
 
-const /** {NodeList}  */ rippleElements = document.querySelectorAll("[data-ripple]");
+const /** {NodeList}  */ $rippleElems = document.querySelectorAll("[data-ripple]");
 
-rippleElements.forEach(rippleElement => ripple(rippleElement));
+$rippleElems.forEach($rippleElem => ripple($rippleElem));

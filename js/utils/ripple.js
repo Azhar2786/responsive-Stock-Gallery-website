@@ -4,25 +4,26 @@
 
 
 /**
- * @param {Node} rippleElement Element for ripple effect
+ * @param {Node} $rippleElem Element for ripple effect
  */
 
-export const ripple = function(rippleElement){
-    rippleElement.addEventListener("pointerdown", function (e) {
+export const ripple = function($rippleElem){
+
+    $rippleElem.addEventListener("pointerdown", function (e) {
         e.stopImmediatePropagation();
 
-        const /** {NodeElement} */ ripple = document.createElement("div");
-        ripple.classList.add("ripple");
+        const /** {NodeElement} */ $ripple = document.createElement("div");
+        $ripple.classList.add("ripple");
 
-        this.appendChild(ripple);
+        this.appendChild($ripple);
 
         const removeRipple = () => {
-            ripple.animate({
+            $ripple.animate({
                 opacity: 0
-            },{ fill: "forwards", duration: 200});
+            }, { fill: "forwards", duration: 200});
 
             setTimeout(() =>{
-                ripple.remove();
+                $ripple.remove();
             }, 1000);
         }
 
@@ -35,12 +36,12 @@ export const ripple = function(rippleElement){
             /**
              * {Number}
              */
-            rippleSize = Math.max(this.clientWidth, this.clientHeight);
+         const rippleSize = Math.max(this.clientWidth, this.clientHeight);
 
-            ripple.style.top = `${e.layerY}px`;
-            ripple.style.left = `${e.layerX}px`;
-            ripple.style.width = `${rippleSize}px`;
-            ripple.style.height = `${rippleSize}px`;
+            $ripple.style.top = `${e.layerY}px`;
+            $ripple.style.left = `${e.layerX}px`;
+            $ripple.style.width = `${rippleSize}px`;
+            $ripple.style.height = `${rippleSize}px`;
         }
     });
 }
