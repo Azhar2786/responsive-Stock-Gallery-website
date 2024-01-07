@@ -9,6 +9,7 @@
 import { ripple } from "./utils/ripple.js";
 import { addEventOnElements } from "./utils/event.js";
 import { segment } from "./segment_btn.js";
+import { updateUrl } from "./utils/updateUrl.js";
 
 /** { NodeList } */
 const searchTogglers = document.querySelectorAll("[data-search-toggler]");
@@ -56,9 +57,20 @@ searchBtn.addEventListener("click", function () {
     console.log(searchValue);
     if(searchValue) {
         updateSearchHistory(searchValue);
+        window.filterObj.query = searchValue;
+        updateUrl(window.filterObj, window.searchType);
     }
 });
 
+
+/**
+ * Submit search when press on enter key
+ */
+
+searchField.addEventListener("keydown", e => {
+    if(e.key == "Enter" && searchField.value.trim())
+        searchBtn.click();
+});
 
 
 /**
@@ -114,6 +126,13 @@ for(let i = 0; i < historyLength & i <= 5; i++){
 
         <div class="state-layer"></div>
     `;
+
+    ripple(listItem);
+
+    listItem.addEventListener("click", function () {
+        searchField.value = this.children[1].textContent;
+        searchBtn.click();
+    });
 
     searchList.appendChild(listItem);
 }
