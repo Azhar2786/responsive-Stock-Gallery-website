@@ -546,7 +546,7 @@ button:disabled{
   gap: var(--column-gap);
 
   /* for javascript */
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 .column{
@@ -574,6 +574,22 @@ button:disabled{
   z-index: 1;
 }
 
+
+.skeleton{
+  background-color: var(--surface-container-highest);
+  border-radius: var(--radius-medium);
+  aspect-ratio: 2/3;
+  animation: skeleton-loading 1000ms linear infinite alternate;
+}
+
+@keyframes skeleton-loading {
+  0%{
+    opacity: 0.5;
+  }
+  100%{
+    opacity: 1;
+  }
+}
 
 
 
@@ -1190,6 +1206,9 @@ button:disabled{
   #CURATED PHOTOS & POPULAR VIDEO
 \*-----------------------------------*/
 
+:where(.featured-photo, .popular-videos) .column {
+  margin-block-end: -800px;
+}
 
 
 
