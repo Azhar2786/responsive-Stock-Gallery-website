@@ -33,3 +33,31 @@ client.photos.curated({page: 1, per_page: 20}, data =>{
 
     });
 })
+
+
+
+
+/**
+ * Render popular video in home page
+ */
+
+
+const $videoGrid = document.querySelector("[data-video-grid]");
+
+$videoGrid.innerHTML = `<div class="skeleton"></div>`.repeat(18);
+
+client.videos.popular({ per_page: 20 }, data => {
+
+    $videoGrid.innerHTML = "";
+    const /** {Array} */ videoGrid = gridInit($videoGrid);
+
+    data.videos.forEach(video =>{
+
+        const $videoCard = videoCard(video);
+
+        updateGrid($videoCard, videoGrid.columnsHeight, videoGrid.columns);
+
+    });
+
+
+});

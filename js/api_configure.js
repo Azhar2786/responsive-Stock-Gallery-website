@@ -100,7 +100,7 @@ export const /** {Object} */ client = {
          */
 
         popular(parameters, callback){
-            fetchData(`${root.default}popular?${urlEncode(parameters)}`, callback);
+            fetchData(`${root.videos}popular?${urlEncode(parameters)}`, callback);
         },
 
         /**
