@@ -10,6 +10,7 @@ import { ripple } from "./utils/ripple.js";
 import { addEventOnElements } from "./utils/event.js";
 import { segment } from "./segment_btn.js";
 import { updateUrl } from "./utils/updateUrl.js";
+import { urlDecode } from "./utils/urlDecode.js";
 
 /** { NodeList } */
 const searchTogglers = document.querySelectorAll("[data-search-toggler]");
@@ -135,4 +136,18 @@ for(let i = 0; i < historyLength & i <= 5; i++){
     });
 
     searchList.appendChild(listItem);
+}
+
+
+
+/**
+ * Show searched value in search feild after reload
+ */
+
+const /** {Object} */ search = urlDecode(window.location.search.slice(1));
+
+// console.log(search);
+
+if(search.query) {
+    searchField.value = search.query;
 }
