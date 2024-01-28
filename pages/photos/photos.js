@@ -1,78 +1,117 @@
-
 "use strict";
+
 
 /**
  * Import
  */
 
-import { ripple } from "./utils/ripple.js";
-import { favorite } from "./favorite.js";
+
+import { client } from "../../js/api_configure.js";
+import { gridInit, updateGrid } from "../../js/utils/masonry_grid.js";
+import { photoCard } from "../../js/photo_card.js";
+import { updateUrl } from "../../js/utils/updateUrl.js";
+import { urlDecode } from "../../js/utils/urlDecode.js";
+import { filter } from "../../js/filter.js";
+
 
 /**
- * Create photo card
- * @param {Object} photo Photo object
- * @returns Photo card
+ * Show filter bar if searched  anything
  */
 
-export const photoCard = photo => {
-
-    /** String */
-    const root = window.location.origin;
-    // console.log(photo);
-
-    const {
-        alt,
-        avg_color: backdropColor,
-        width,
-        height,
-        id,
-        // photographer,
-        src: { large }
-    } = photo;
-
-    const card = document.createElement("div");
-    card.classList.add("card", "grid-item");
-    card.style.backgroundColor = backdropColor;
-
-    const favoriteObj = JSON.parse(window.localStorage.getItem("favorite"));
-
-    card.innerHTML = `
-    <figure class="card-banner" style="--width: ${width}; --height: ${height};">
-        <img src="${large}" alt=""
-        width="${width}" height="${height}" loading="lazy" alt="${alt}" class="img-cover">
-    </figure>
-
-    <div class="card-content">
+const filterBar = document.querySelector("[data-filter-bar]");
 
 
-        <button class="icon-btn small ${favoriteObj.photos[id] ? "active" : ""} " aria-label="Add to favorite" data-ripple data-favorite-btn>
-            <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+filterBar.style.display = window.location.search ? "flex" : "none";
 
-            <div class="state-layer"></div>
-        </button>
+/**
+ * Init filter
+ */
 
-    </div>
+const  filterWrapppers = document.querySelectorAll("[data-filter");
 
-    <a href="${root}/pages/photos/photo_detail.html?id=${id}" class="state-layer"></a>    
-    `;
+filterWrapppers.forEach(filterWrappper => {
+    filter(filterWrappper, window.filterObj, (newObj) => {
+        // console.log(newObj);
+        window.filterObj = newObj;
+        updateUrl(newObj, "photos");
 
-    const cardBanner = card.querySelector("img");
-
-    cardBanner.style.opacity = 0;
-
-    cardBanner.addEventListener("load", function () {
-        this.animate({
-            opacity: 1
-        }, {duration: 400, fill: "forwards"})
     });
+});
 
-    const rippleElems = [card, card.querySelector("[data-ripple]")];
 
-    rippleElems.forEach(rippleElem => ripple(rippleElem));
 
-    const favoriteBtn = card.querySelector("[ data-favorite-btn]");
+/**
+ * Render curated or searched photos
+ * If searched something then searched photos
+ * otherwise render curated photos
+ */
 
-    favorite(favoriteBtn, "photos", id);
+const $photoGrid = document.querySelector("[data-photo-grid]");
 
-    return card;
-}
+const $title = document.querySelector("[data-title]");
+const /** {Object} */ photoGrid = gridInit($photoGrid);
+const perPage = 30;
+let currentPage = 1;
+let totalPage = 0;
+const searchUrl = window.location.search.slice(1);
+let searchObj = searchUrl && urlDecode(searchUrl);
+const title = searchObj ? `${searchObj.query} photos` : "Curated photos";
+
+
+$title.textContent = title;
+document.title = title;
+
+
+/**
+ * Render all photos
+ * @param {Number} currentPage Current page number
+ */
+
+const  renderPhotos = function (currentPage) {
+    client.photos[searchObj ? "search" : "curated"]({ ...searchObj, per_page: perPage, page: currentPage}, data =>{
+        // console.log(data);
+
+        totalPage = Math.ceil(data.total_results / perPage);
+
+        data.photos.forEach(photo => {
+            const $photoCard = photoCard(photo);
+             
+            updateGrid($photoCard, photoGrid.columnsHeight, photoGrid.columns);
+            
+        });
+
+        // when photos loaded
+        isLoaded = true;
+
+        //when no more photo found, hide loader
+        if(currentPage >= totalPage){
+            loader.style.display = "none";
+        }
+    });
+};
+
+
+
+renderPhotos(currentPage);
+
+
+/**
+ * Laod more photos
+ */
+
+const loader = document.querySelector("[data-loader");
+let isLoaded = true;
+
+window.addEventListener("scroll", function () {
+
+    // console.log(loader.getBoundingClientRect().top);
+
+    if(loader.getBoundingClientRect().top < (window.innerHeight * 2) && currentPage <= totalPage && isLoaded){
+        currentPage++;
+        renderPhotos(currentPage);
+        isLoaded = false;
+    }
+
+})
+
+
