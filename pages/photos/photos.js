@@ -112,6 +112,6 @@ window.addEventListener("scroll", function () {
         isLoaded = false;
     }
 
-})
+});
 
 
